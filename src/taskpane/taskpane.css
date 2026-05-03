@@ -1,0 +1,238 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+.ms-welcome__main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1 0 0;
+    padding: 16px 18px 24px;
+}
+
+b {
+    font-weight: bold;
+}
+
+/* ---------- Theme tokens ---------- */
+
+:root {
+    --bg: #ffffff;
+    --fg: #323130;
+    --muted: #605e5c;
+    --control-bg: #ffffff;
+    --control-fg: #323130;
+    --border: #d2d0ce;
+    --border-strong: #a19f9d;
+    --hover-bg: #f3f2f1;
+    --accent: #e0457b;
+    --accent-fg: #ffffff;
+    --accent-hover: #c93b6c;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1f1f1f;
+        --fg: #e6e6e6;
+        --muted: #a6a6a6;
+        --control-bg: #2b2b2b;
+        --control-fg: #e6e6e6;
+        --border: #3a3a3a;
+        --border-strong: #5a5a5a;
+        --hover-bg: #383838;
+        --accent: #f06292;
+        --accent-fg: #1a1a1a;
+        --accent-hover: #f48fb1;
+    }
+}
+
+body.theme-light {
+    --bg: #ffffff;
+    --fg: #323130;
+    --muted: #605e5c;
+    --control-bg: #ffffff;
+    --control-fg: #323130;
+    --border: #d2d0ce;
+    --border-strong: #a19f9d;
+    --hover-bg: #f3f2f1;
+    --accent: #e0457b;
+    --accent-fg: #ffffff;
+    --accent-hover: #c93b6c;
+}
+
+body.theme-dark {
+    --bg: #1f1f1f;
+    --fg: #e6e6e6;
+    --muted: #a6a6a6;
+    --control-bg: #2b2b2b;
+    --control-fg: #e6e6e6;
+    --border: #3a3a3a;
+    --border-strong: #5a5a5a;
+    --hover-bg: #383838;
+    --accent: #f06292;
+    --accent-fg: #1a1a1a;
+    --accent-hover: #f48fb1;
+}
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+        BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* ---------- Typography ---------- */
+
+.ms-welcome__main > h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    text-align: left;
+    color: var(--fg);
+}
+
+.ms-welcome__main > p {
+    margin: 0 0 18px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.ms-welcome__main > h3 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 18px 0 8px;
+    color: var(--muted);
+}
+
+.ms-welcome__main > h3:first-of-type {
+    margin-top: 4px;
+}
+
+.ms-Label {
+    font-size: 12px;
+    color: var(--muted);
+    display: block;
+    margin: 0 0 6px;
+}
+
+/* ---------- Presets row ---------- */
+
+#presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+#presets button.ms-Button {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 6px 12px;
+    height: auto;
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.3;
+    border-radius: 4px;
+    background: var(--control-bg);
+    color: var(--control-fg);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+#presets button.ms-Button:hover,
+#presets button.ms-Button:focus {
+    background: var(--hover-bg);
+    border-color: var(--border-strong);
+    outline: none;
+}
+
+/* ---------- Custom inputs / actions ---------- */
+
+input.ms-TextField-field {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    font-size: 13px;
+    line-height: 1.3;
+    border-radius: 4px;
+    background: var(--control-bg);
+    color: var(--control-fg);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+input.ms-TextField-field::placeholder {
+    color: var(--muted);
+}
+
+input.ms-TextField-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.ms-welcome__main > button.ms-Button {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 6px;
+    padding: 8px 12px;
+    height: auto;
+    min-height: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    text-align: center;
+    border-radius: 4px;
+    background: var(--control-bg);
+    color: var(--control-fg);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.ms-welcome__main > button.ms-Button:hover,
+.ms-welcome__main > button.ms-Button:focus {
+    background: var(--hover-bg);
+    border-color: var(--border-strong);
+    outline: none;
+}
+
+.ms-welcome__main > button#run-keep-order.ms-Button {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border-color: transparent;
+    font-weight: 600;
+}
+
+.ms-welcome__main > button#run-keep-order.ms-Button:hover,
+.ms-welcome__main > button#run-keep-order.ms-Button:focus {
+    background: var(--accent-hover);
+    border-color: transparent;
+}
+
+/* ---------- Status ---------- */
+
+#status {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    min-height: 1em;
+}
