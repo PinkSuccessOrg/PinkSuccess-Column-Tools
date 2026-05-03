@@ -1,6 +1,6 @@
 /* global Excel */
 
-import { detectHeaderRow, resolveColumnIndex } from "./headers";
+import { detectHeaderRow, normalizeHeader, resolveColumnIndex } from "./headers";
 import { Preset } from "./presets";
 
 export type StatusFn = (msg: string) => void;
@@ -63,8 +63,8 @@ export async function keepColumnsBySet(
     setStatus("No headers given.");
     return;
   }
-  const wanted = new Set(keepHeaders.map((h) => h.toLowerCase()));
-  await deleteWhere((header) => !wanted.has(header.toLowerCase()), "Kept", setStatus);
+  const wanted = new Set(keepHeaders.map(normalizeHeader));
+  await deleteWhere((header) => !wanted.has(normalizeHeader(header)), "Kept", setStatus);
 }
 
 export async function removeColumnsByHeader(
@@ -75,8 +75,8 @@ export async function removeColumnsByHeader(
     setStatus("No headers given.");
     return;
   }
-  const drop = new Set(removeHeaders.map((h) => h.toLowerCase()));
-  await deleteWhere((header) => drop.has(header.toLowerCase()), "Removed", setStatus);
+  const drop = new Set(removeHeaders.map(normalizeHeader));
+  await deleteWhere((header) => drop.has(normalizeHeader(header)), "Removed", setStatus);
 }
 
 async function deleteWhere(
@@ -96,6 +96,7 @@ async function deleteWhere(
       const headerRow = (data[layout.headerRowIdx] ?? []).map((h) => String(h ?? ""));
       let deleted = 0;
 
+      // Iterate right-to-left so deleting column i doesn't invalidate indices < i.
       for (let i = headerRow.length - 1; i >= 0; i--) {
         if (shouldDelete(headerRow[i])) {
           sheet
