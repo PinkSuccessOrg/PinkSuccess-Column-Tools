@@ -216,28 +216,38 @@
 
     <details>
       <summary>Excel on Mac</summary>
+      <div class="note">
+        <strong>Easier alternative:</strong> Excel for Mac desktop has no &ldquo;Upload My Add-in&rdquo; button &mdash; the install below is fiddly because it requires opening a hidden Library folder. If your work doesn&rsquo;t need any Mac-only Excel features, the <a href="#excel-on-the-web">Excel for the web</a> path is much simpler. Open the workbook at <a href="https://office.com" target="_blank" rel="noopener">office.com</a> and follow the web instructions instead.
+      </div>
+      <p>If you do want the Mac desktop version:</p>
       <ol>
+        <li>Quit Excel completely (<strong>Cmd+Q</strong>).</li>
         <li>Click <a href="manifest.xml" download>Download manifest.xml</a>.</li>
-        <li>In Excel, go to the <strong>Insert</strong> tab.</li>
-        <li>Click <strong>My Add-ins</strong>.</li>
-        <li>In the dialog, click <strong>Upload My Add-in</strong> (top-right).</li>
-        <li>Choose the downloaded <code>manifest.xml</code>.</li>
-        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
+        <li>Open <strong>Finder</strong>. Press <strong>Cmd+Shift+G</strong> to bring up the <strong>Go to Folder</strong> dialog.</li>
+        <li>Paste this exact path and press Enter:
+          <pre>~/Library/Containers/com.microsoft.Excel/Data/Documents/wef</pre>
+          If Finder says the folder doesn&rsquo;t exist, paste the parent path <code>~/Library/Containers/com.microsoft.Excel/Data/Documents/</code>, create a new folder named exactly <code>wef</code> (lowercase, no quotes), then try the full path again.
+        </li>
+        <li>Drag the downloaded <code>manifest.xml</code> into the <code>wef</code> folder.</li>
+        <li>Reopen Excel and open or create any workbook.</li>
+        <li>Click <strong>Insert &rarr; My Add-ins</strong>. Your add-in appears under a <strong>Developer Add-ins</strong> section in that dialog &mdash; click it.</li>
+        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab. Click it whenever you want to open the task pane.</li>
       </ol>
-      <p>If you don't see <strong>Upload My Add-in</strong>, your Excel for Mac may be older than required. Update via Microsoft AutoUpdate (<strong>Help &rarr; Check for Updates</strong>).</p>
+      <p>You only need to do this once per Mac. After the first load, Excel remembers the add-in.</p>
     </details>
 
-    <details>
-      <summary>Excel on the web</summary>
+    <details id="excel-on-the-web">
+      <summary>Excel on the web (recommended for Mac users)</summary>
+      <p>This works on any computer &mdash; Mac, Windows, Chromebook &mdash; and is the simplest path for Mac users since Excel for Mac desktop lacks the upload button.</p>
       <ol>
-        <li>Open the workbook in Excel for the web (<a href="https://office.com" target="_blank" rel="noopener">office.com</a>).</li>
-        <li>Click <strong>Insert &rarr; Add-ins &rarr; More Add-ins</strong>.</li>
-        <li>In the Office Add-ins dialog, click <strong>Upload My Add-in</strong> (top-right).</li>
-        <li>Click <strong>Browse</strong>, pick <code>manifest.xml</code>, and click <strong>Upload</strong>.</li>
+        <li>Open the workbook in Excel for the web (<a href="https://office.com" target="_blank" rel="noopener">office.com</a>) by uploading it to OneDrive and double-clicking it, or by opening it directly from a SharePoint/Teams location.</li>
+        <li>Click <strong>Home &rarr; Add-ins</strong> (or <strong>Insert &rarr; Add-ins &rarr; More Add-ins</strong>, depending on your version).</li>
+        <li>In the Office Add-ins dialog, click <strong>More Settings</strong> and then <strong>Upload My Add-in</strong> (top-right of the dialog).</li>
+        <li>Click <strong>Browse</strong>, pick the downloaded <code>manifest.xml</code>, and click <strong>Upload</strong>.</li>
         <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
       </ol>
       <div class="note">
-        <strong>Note:</strong> Some organizations disable manifest sideloading on Excel for the web. If you don't see <strong>Upload My Add-in</strong>, ask IT to push the add-in via the Microsoft 365 admin center (instructions further down).
+        <strong>Note:</strong> Some organizations disable manifest sideloading on Excel for the web. If you don&rsquo;t see <strong>Upload My Add-in</strong>, ask IT to push the add-in via the Microsoft 365 admin center (instructions further down).
       </div>
     </details>
 
