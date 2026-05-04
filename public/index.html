@@ -200,26 +200,77 @@
       <li>Open the report you want to clean up in Excel <strong>before</strong> clicking a preset button. The add-in operates on whatever sheet is active.</li>
     </ul>
 
-    <h2>Install &mdash; pick your platform</h2>
+    <h2>Install</h2>
 
-    <details open>
-      <summary>Excel on Windows</summary>
+    <div class="note">
+      <strong>Recommended for everyone:</strong> use <strong>Excel for the web</strong> at <a href="https://office.com" target="_blank" rel="noopener">office.com</a>. It&rsquo;s the only place where the install is a simple click-to-upload &mdash; and it works on Mac, Windows, Chromebook, anywhere. Microsoft removed the upload button from desktop Excel in recent versions, so the desktop install on either Windows or Mac involves Trust Center settings, hidden folders, or registry edits. If you don&rsquo;t need a desktop-only Excel feature, save yourself the trouble and use the web.
+    </div>
+
+    <details open id="excel-on-the-web">
+      <summary>Excel for the web (recommended)</summary>
       <ol>
-        <li>Click the <a href="manifest.xml" download>Download manifest.xml</a> button at the top and save it somewhere you can find it (Desktop or Downloads is fine).</li>
-        <li>In Excel, go to the <strong>Insert</strong> tab.</li>
-        <li>Click the dropdown arrow next to <strong>My Add-ins</strong> and choose <strong>Manage My Add-ins</strong>. (If you don't see that option, click <strong>Get Add-ins</strong>, then in the dialog that opens, click <strong>My Add-ins</strong> at the top.)</li>
-        <li>Click <strong>Upload My Add-in</strong> in the upper-right of the dialog.</li>
-        <li>Click <strong>Browse</strong>, pick the <code>manifest.xml</code> you downloaded, and click <strong>Upload</strong>.</li>
-        <li>Excel adds a <strong>Show Tools</strong> button on the <strong>Home</strong> tab. Click it whenever you want to open the task pane.</li>
+        <li>Click <a href="manifest.xml" download>Download manifest.xml</a> at the top of this page.</li>
+        <li>Open the workbook in Excel for the web at <a href="https://office.com" target="_blank" rel="noopener">office.com</a> &mdash; either upload it to OneDrive first, or open it directly from a SharePoint/Teams location.</li>
+        <li>Click <strong>Home &rarr; Add-ins</strong> on the ribbon.</li>
+        <li>In the Office Add-ins dialog, click <strong>More Settings</strong>, then click <strong>Upload My Add-in</strong> (top-right of the dialog).</li>
+        <li>Click <strong>Browse</strong>, pick the downloaded <code>manifest.xml</code>, and click <strong>Upload</strong>.</li>
+        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab. Click it whenever you want to open the task pane.</li>
       </ol>
+      <p>The web client stores the add-in in your browser. If you clear your cache or switch browsers, you&rsquo;ll need to upload the manifest again &mdash; but the file from this page never changes, so it&rsquo;s a 30-second redo.</p>
+      <div class="note">
+        <strong>If you don&rsquo;t see <em>Upload My Add-in</em>:</strong> some organizations disable manifest sideloading on Excel for the web. Ask whoever administers your Microsoft 365 tenant to deploy the add-in centrally (instructions further down).
+      </div>
     </details>
 
     <details>
-      <summary>Excel on Mac</summary>
+      <summary>Excel on Windows desktop</summary>
       <div class="note">
-        <strong>Easier alternative:</strong> Excel for Mac desktop has no &ldquo;Upload My Add-in&rdquo; button &mdash; the install below is fiddly because it requires opening a hidden Library folder. If your work doesn&rsquo;t need any Mac-only Excel features, the <a href="#excel-on-the-web">Excel for the web</a> path is much simpler. Open the workbook at <a href="https://office.com" target="_blank" rel="noopener">office.com</a> and follow the web instructions instead.
+        <strong>Heads up:</strong> Excel for Windows desktop no longer has an &ldquo;Upload My Add-in&rdquo; button. The supported install method is to register a folder on your computer as a <em>Trusted Add-in Catalog</em>. If you can use <a href="#excel-on-the-web">Excel for the web</a> instead, do &mdash; the web install is much simpler.
       </div>
-      <p>If you do want the Mac desktop version:</p>
+      <p>If you need desktop, this is a one-time setup per machine. Don&rsquo;t skip any step.</p>
+
+      <h3>Part 1: Create a shared folder for the manifest</h3>
+      <ol>
+        <li>Pick a folder on your computer to hold the manifest. For example, create a new folder at <code>C:\OfficeAddins</code>.</li>
+        <li>Right-click the folder and choose <strong>Properties</strong>.</li>
+        <li>Click the <strong>Sharing</strong> tab, then click the <strong>Share&hellip;</strong> button.</li>
+        <li>In the dialog, make sure your own user account is in the list with <strong>Read/Write</strong> permission. Click <strong>Share</strong>.</li>
+        <li>When Windows says &ldquo;Your folder is shared,&rdquo; <strong>copy the full network path</strong> shown under the folder name (it looks like <code>\\YOUR-PC-NAME\OfficeAddins</code>). You&rsquo;ll need it in the next part.</li>
+        <li>Click <strong>Done</strong>, then <strong>Close</strong>.</li>
+      </ol>
+
+      <h3>Part 2: Tell Excel to trust that folder</h3>
+      <ol>
+        <li>Open Excel and start a new blank workbook.</li>
+        <li>Click <strong>File &rarr; Options</strong>.</li>
+        <li>Click <strong>Trust Center</strong> in the left sidebar, then click the <strong>Trust Center Settings&hellip;</strong> button.</li>
+        <li>Click <strong>Trusted Add-in Catalogs</strong> in the left sidebar.</li>
+        <li>Paste the network path you copied in Part 1 into the <strong>Catalog Url</strong> box.</li>
+        <li>Click <strong>Add catalog</strong>.</li>
+        <li>The path now appears in the list below. Tick the <strong>Show in Menu</strong> checkbox next to it.</li>
+        <li>Click <strong>OK</strong> to close Trust Center, then <strong>OK</strong> again to close Options.</li>
+        <li><strong>Close Excel completely</strong> and reopen it (this is required for the new trusted catalog to take effect).</li>
+      </ol>
+
+      <h3>Part 3: Drop the manifest in and load the add-in</h3>
+      <ol>
+        <li>Click <a href="manifest.xml" download>Download manifest.xml</a> at the top of this page.</li>
+        <li>Move the downloaded <code>manifest.xml</code> into the folder you created in Part 1 (e.g., <code>C:\OfficeAddins</code>).</li>
+        <li>Back in Excel, click <strong>Home &rarr; Add-ins</strong> on the ribbon, then click <strong>Advanced</strong> at the bottom of the Add-ins flyout.</li>
+        <li>In the Office Add-ins dialog, click the <strong>SHARED FOLDER</strong> tab at the top.</li>
+        <li>Select <strong>PinkSuccess Tools</strong>, then click <strong>Add</strong>.</li>
+        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
+      </ol>
+
+      <p>One-time setup is done. To open the task pane any time, click <strong>Show Tools</strong> on the Home tab.</p>
+    </details>
+
+    <details>
+      <summary>Excel on Mac desktop</summary>
+      <div class="note">
+        <strong>Heads up:</strong> Excel for Mac desktop has no &ldquo;Upload My Add-in&rdquo; button either. The install below requires opening a hidden Library folder. If you can use <a href="#excel-on-the-web">Excel for the web</a> instead, do &mdash; the web install is much simpler and works fine on Mac.
+      </div>
+      <p>If you need desktop:</p>
       <ol>
         <li>Quit Excel completely (<strong>Cmd+Q</strong>).</li>
         <li>Click <a href="manifest.xml" download>Download manifest.xml</a>.</li>
@@ -231,29 +282,14 @@
         <li>Drag the downloaded <code>manifest.xml</code> into the <code>wef</code> folder.</li>
         <li>Reopen Excel and open or create any workbook.</li>
         <li>Click <strong>Insert &rarr; My Add-ins</strong>. Your add-in appears under a <strong>Developer Add-ins</strong> section in that dialog &mdash; click it.</li>
-        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab. Click it whenever you want to open the task pane.</li>
-      </ol>
-      <p>You only need to do this once per Mac. After the first load, Excel remembers the add-in.</p>
-    </details>
-
-    <details id="excel-on-the-web">
-      <summary>Excel on the web (recommended for Mac users)</summary>
-      <p>This works on any computer &mdash; Mac, Windows, Chromebook &mdash; and is the simplest path for Mac users since Excel for Mac desktop lacks the upload button.</p>
-      <ol>
-        <li>Open the workbook in Excel for the web (<a href="https://office.com" target="_blank" rel="noopener">office.com</a>) by uploading it to OneDrive and double-clicking it, or by opening it directly from a SharePoint/Teams location.</li>
-        <li>Click <strong>Home &rarr; Add-ins</strong> (or <strong>Insert &rarr; Add-ins &rarr; More Add-ins</strong>, depending on your version).</li>
-        <li>In the Office Add-ins dialog, click <strong>More Settings</strong> and then <strong>Upload My Add-in</strong> (top-right of the dialog).</li>
-        <li>Click <strong>Browse</strong>, pick the downloaded <code>manifest.xml</code>, and click <strong>Upload</strong>.</li>
         <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
       </ol>
-      <div class="note">
-        <strong>Note:</strong> Some organizations disable manifest sideloading on Excel for the web. If you don&rsquo;t see <strong>Upload My Add-in</strong>, ask IT to push the add-in via the Microsoft 365 admin center (instructions further down).
-      </div>
+      <p>One-time setup per Mac. After the first load, Excel remembers it.</p>
     </details>
 
     <details>
       <summary>Excel on iPad</summary>
-      <p>Sideloading from a manifest URL isn't supported on iPad. The add-in needs to be deployed to your tenant by an admin via the Microsoft 365 admin center. Once deployed, it appears under <strong>Insert &rarr; Add-ins</strong>.</p>
+      <p>Sideloading from a manifest URL isn&rsquo;t supported on iPad. The add-in needs to be deployed to your tenant by an admin via the Microsoft 365 admin center (instructions just below). Once deployed, it appears automatically under <strong>Insert &rarr; Add-ins</strong>.</p>
     </details>
 
     <h2>Install for a whole organization (admin)</h2>
