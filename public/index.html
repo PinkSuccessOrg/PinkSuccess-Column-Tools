@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PinkSuccess Column Tools</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1f1f1f;
+      --muted: #605e5c;
+      --border: #e5e5e5;
+      --accent: #e0457b;
+      --accent-fg: #ffffff;
+      --accent-hover: #c93b6c;
+      --code-bg: #f6f6f6;
+      --note-bg: #fff7fb;
+      --note-border: #f3c2d6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --fg: #e6e6e6;
+        --muted: #a6a6a6;
+        --border: #333333;
+        --accent: #f06292;
+        --accent-fg: #1a1a1a;
+        --accent-hover: #f48fb1;
+        --code-bg: #2b2b2b;
+        --note-bg: #2a1f25;
+        --note-border: #4a2c3a;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      line-height: 1.55;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+    h1 {
+      font-size: 30px;
+      font-weight: 600;
+      margin: 0 0 6px;
+    }
+    p.lede {
+      color: var(--muted);
+      margin: 0 0 28px;
+      font-size: 16px;
+    }
+    h2 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 40px 0 12px;
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 22px 0 8px;
+    }
+    p { margin: 0 0 12px; }
+    ol, ul { padding-left: 22px; margin: 0 0 14px; }
+    ol li, ul li { margin-bottom: 6px; }
+    a { color: var(--accent); }
+    a:hover { color: var(--accent-hover); }
+    a.button {
+      display: inline-block;
+      padding: 11px 20px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.12s ease;
+    }
+    a.button:hover, a.button:focus { background: var(--accent-hover); }
+    a.button.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      margin-left: 8px;
+    }
+    a.button.secondary:hover { background: var(--accent); color: var(--accent-fg); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.92em;
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 12px 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 13px;
+      margin: 0 0 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 14px;
+      font-size: 14px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th { font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .note {
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+    .note strong { color: var(--accent); }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+    }
+    details[open] { padding-bottom: 6px; }
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::before {
+      content: "▸";
+      display: inline-block;
+      margin-right: 8px;
+      transition: transform 0.15s ease;
+      color: var(--muted);
+    }
+    details[open] > summary::before { transform: rotate(90deg); }
+    .footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer code { font-size: 0.88em; }
+    @media (max-width: 520px) {
+      main { padding: 36px 18px 72px; }
+      a.button.secondary { margin-left: 0; margin-top: 8px; display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>PinkSuccess Column Tools</h1>
+    <p class="lede">An Excel task pane add-in that shapes Mary Kay InTouch reports into newsletter-ready column sets &mdash; one click per report.</p>
+
+    <p>
+      <a class="button" href="manifest.xml" download>Download manifest.xml</a>
+      <a class="button secondary" href="manifest.xml">View manifest</a>
+    </p>
+
+    <h2>What it does</h2>
+    <p>The add-in reads the active worksheet, detects the header row (handling the multi-row group/header layouts that several InTouch reports ship with), keeps the columns you need, and discards the rest. Eight presets are wired to specific reports:</p>
+    <table>
+      <thead>
+        <tr><th>Button</th><th>Source report</th><th>Columns kept</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>OT Star</strong></td><td>Star Consultant Tracking</td><td>Name, Wholesale $ + Team Building, Sapphire, Ruby, Diamond, Emerald, Pearl</td></tr>
+        <tr><td><strong>Ct Sales</strong></td><td>Seminar YTD Court of Sales</td><td>Rank, Conslt Name, YTD Total</td></tr>
+        <tr><td><strong>Ct Sharing</strong></td><td>Seminar YTD Court of Sharing</td><td>Name, Sem Qual Team Member, Sem Recruiter Comm Earned</td></tr>
+        <tr><td><strong>B-Day</strong></td><td>Birthdays, Anniversaries and Addresses</td><td>Name, Birth Date</td></tr>
+        <tr><td><strong>Anniv</strong></td><td>Birthdays, Anniversaries and Addresses</td><td>Name, Number Of Years</td></tr>
+        <tr><td><strong>WHSL</strong></td><td>Unit Wholesale Scoreboard</td><td>Name, Unit Wholesale</td></tr>
+        <tr><td><strong>Checks</strong></td><td>Team Commissions</td><td>Name, %, Team Commission</td></tr>
+        <tr><td><strong>New Cons</strong></td><td>New Unit Members</td><td>New Consultant, From, Recruiter</td></tr>
+      </tbody>
+    </table>
+    <p>A <strong>Custom</strong> section lets you type a comma-separated list of headers and either keep or remove them. Header matching is case-insensitive and tolerates trailing asterisks and stray whitespace.</p>
+
+    <h2>Before you start</h2>
+    <ul>
+      <li>You need <strong>Excel 2016 or later</strong> on Windows or Mac, <strong>Excel for Microsoft 365</strong>, or <strong>Excel on the web</strong>.</li>
+      <li>You need permission to install custom add-ins. Most Microsoft 365 work accounts allow this; some restrict it &mdash; if you hit a permission wall, see the IT-managed deployment section below.</li>
+      <li>Open the report you want to clean up in Excel <strong>before</strong> clicking a preset button. The add-in operates on whatever sheet is active.</li>
+    </ul>
+
+    <h2>Install &mdash; pick your platform</h2>
+
+    <details open>
+      <summary>Excel on Windows</summary>
+      <ol>
+        <li>Click the <a href="manifest.xml" download>Download manifest.xml</a> button at the top and save it somewhere you can find it (Desktop or Downloads is fine).</li>
+        <li>In Excel, go to the <strong>Insert</strong> tab.</li>
+        <li>Click the dropdown arrow next to <strong>My Add-ins</strong> and choose <strong>Manage My Add-ins</strong>. (If you don't see that option, click <strong>Get Add-ins</strong>, then in the dialog that opens, click <strong>My Add-ins</strong> at the top.)</li>
+        <li>Click <strong>Upload My Add-in</strong> in the upper-right of the dialog.</li>
+        <li>Click <strong>Browse</strong>, pick the <code>manifest.xml</code> you downloaded, and click <strong>Upload</strong>.</li>
+        <li>Excel adds a <strong>Show Tools</strong> button on the <strong>Home</strong> tab. Click it whenever you want to open the task pane.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary>Excel on Mac</summary>
+      <ol>
+        <li>Click <a href="manifest.xml" download>Download manifest.xml</a>.</li>
+        <li>In Excel, go to the <strong>Insert</strong> tab.</li>
+        <li>Click <strong>My Add-ins</strong>.</li>
+        <li>In the dialog, click <strong>Upload My Add-in</strong> (top-right).</li>
+        <li>Choose the downloaded <code>manifest.xml</code>.</li>
+        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
+      </ol>
+      <p>If you don't see <strong>Upload My Add-in</strong>, your Excel for Mac may be older than required. Update via Microsoft AutoUpdate (<strong>Help &rarr; Check for Updates</strong>).</p>
+    </details>
+
+    <details>
+      <summary>Excel on the web</summary>
+      <ol>
+        <li>Open the workbook in Excel for the web (<a href="https://office.com" target="_blank" rel="noopener">office.com</a>).</li>
+        <li>Click <strong>Insert &rarr; Add-ins &rarr; More Add-ins</strong>.</li>
+        <li>In the Office Add-ins dialog, click <strong>Upload My Add-in</strong> (top-right).</li>
+        <li>Click <strong>Browse</strong>, pick <code>manifest.xml</code>, and click <strong>Upload</strong>.</li>
+        <li>The <strong>Show Tools</strong> button appears on the <strong>Home</strong> tab.</li>
+      </ol>
+      <div class="note">
+        <strong>Note:</strong> Some organizations disable manifest sideloading on Excel for the web. If you don't see <strong>Upload My Add-in</strong>, ask IT to push the add-in via the Microsoft 365 admin center (instructions further down).
+      </div>
+    </details>
+
+    <details>
+      <summary>Excel on iPad</summary>
+      <p>Sideloading from a manifest URL isn't supported on iPad. The add-in needs to be deployed to your tenant by an admin via the Microsoft 365 admin center. Once deployed, it appears under <strong>Insert &rarr; Add-ins</strong>.</p>
+    </details>
+
+    <h2>Install for a whole organization (admin)</h2>
+    <p>If you're rolling this out to a team or unit, central deployment is faster than asking everyone to sideload:</p>
+    <ol>
+      <li>Sign in to the <a href="https://admin.microsoft.com/" target="_blank" rel="noopener">Microsoft 365 admin center</a>.</li>
+      <li>Navigate to <strong>Settings &rarr; Integrated apps</strong>.</li>
+      <li>Click <strong>Upload custom apps</strong>.</li>
+      <li>Choose <strong>Office Add-in</strong> and provide the manifest URL: <code>https://excel-docs.pinksuccess.net/manifest.xml</code>.</li>
+      <li>Assign it to the users or groups who should have it.</li>
+      <li>Allow up to 12 hours for the add-in to appear under <strong>Insert &rarr; Add-ins</strong> in everyone's Excel.</li>
+    </ol>
+
+    <h2>How to use it</h2>
+    <ol>
+      <li>Run the InTouch report you need (e.g., <em>Star Consultant Tracking</em>) and download the Excel export.</li>
+      <li>Open it in Excel.</li>
+      <li>Click <strong>Show Tools</strong> on the Home tab to open the task pane.</li>
+      <li>Click the matching preset button (<strong>OT Star</strong> for the Star Consultant Tracking report, <strong>Anniv</strong> for the anniversaries variant of the Birthdays report, etc.).</li>
+      <li>The sheet is rewritten to keep only the columns you need, in the right order. Save the file or copy/paste into your newsletter.</li>
+    </ol>
+
+    <h2>Troubleshooting</h2>
+    <details>
+      <summary>"This add-in can't be uploaded" or a generic error after picking the manifest</summary>
+      <p>Make sure you downloaded the manifest from the button above (right-clicking and saving the page can grab the wrong content). The file should start with <code>&lt;?xml version="1.0"</code>. Try downloading it again.</p>
+    </details>
+    <details>
+      <summary>Excel says the add-in isn't from a trusted source</summary>
+      <p>This is a one-time prompt the first time you load the add-in. Click <strong>Trust this Add-in</strong>. Excel records that decision; it won't ask again.</p>
+    </details>
+    <details>
+      <summary>The Show Tools button doesn't appear on the Home tab</summary>
+      <p>Close and reopen Excel. If it still doesn't show, open <strong>Insert &rarr; My Add-ins</strong>, find the entry, click the three-dot menu, and choose <strong>Pin to ribbon</strong> (or remove and re-upload).</p>
+    </details>
+    <details>
+      <summary>I clicked a preset and a column came up blank</summary>
+      <p>That preset's expected header wasn't in the source sheet. Either the InTouch column name changed, or the wrong report is open. Open the source workbook and confirm the headers match the table at the top of this page (matching is case-insensitive and tolerates a trailing asterisk).</p>
+    </details>
+    <details>
+      <summary>I want to keep different columns than a preset gives me</summary>
+      <p>Use the <strong>Custom</strong> section in the task pane. Type a comma-separated list of headers (e.g., <code>Name, Email, Phone</code>) and click <strong>Keep &amp; Reorder</strong> to keep just those columns in that order, <strong>Keep (preserve order)</strong> to keep them in their original positions, or <strong>Remove</strong> to drop them.</p>
+    </details>
+
+    <p class="footer">
+      Hosted at <code>excel-docs.pinksuccess.net</code>. Built and deployed automatically on every push to <code>main</code>. Manifest URL: <a href="manifest.xml"><code>https://excel-docs.pinksuccess.net/manifest.xml</code></a>.
+    </p>
+  </main>
+</body>
+</html>
