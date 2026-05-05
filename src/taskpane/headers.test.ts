@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalizeHeader, detectHeaderRow, resolveColumnIndex } from "./headers";
+import { normalizeHeader, detectHeaderRow, resolveColumnIndex, expandColumnRule } from "./headers";
 
 test("normalizeHeader: lowercases and trims", () => {
   assert.equal(normalizeHeader("  Name  "), "name");
@@ -82,4 +82,32 @@ test("resolveColumnIndex: returns -1 when not found", () => {
 test("resolveColumnIndex: matches the percent-sign header", () => {
   const headerRow = ["Name", "%", "Team Commission"];
   assert.equal(resolveColumnIndex(headerRow, "%"), 1);
+});
+
+test("expandColumnRule: single index returns one-element array", () => {
+  assert.deepEqual(expandColumnRule(2, 5), [2]);
+});
+
+test("expandColumnRule: inclusive range expands all indices", () => {
+  assert.deepEqual(expandColumnRule([1, 4], 7), [1, 2, 3, 4]);
+});
+
+test("expandColumnRule: clamps the end of a range to columnCount-1", () => {
+  assert.deepEqual(expandColumnRule([1, 10], 5), [1, 2, 3, 4]);
+});
+
+test("expandColumnRule: clamps a single index past the end to empty", () => {
+  assert.deepEqual(expandColumnRule(7, 3), []);
+});
+
+test("expandColumnRule: negative single index is empty", () => {
+  assert.deepEqual(expandColumnRule(-1, 5), []);
+});
+
+test("expandColumnRule: range with start > columnCount is empty", () => {
+  assert.deepEqual(expandColumnRule([10, 20], 5), []);
+});
+
+test("expandColumnRule: range with start > end is empty", () => {
+  assert.deepEqual(expandColumnRule([4, 1], 7), []);
 });

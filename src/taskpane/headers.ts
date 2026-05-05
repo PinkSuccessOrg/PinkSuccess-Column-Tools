@@ -34,3 +34,19 @@ export function resolveColumnIndex(headerRow: unknown[], wanted: string): number
   }
   return -1;
 }
+
+export function expandColumnRule(
+  columns: number | [number, number],
+  columnCount: number
+): number[] {
+  if (typeof columns === "number") {
+    return columns >= 0 && columns < columnCount ? [columns] : [];
+  }
+  const [rawStart, rawEnd] = columns;
+  const start = Math.max(0, rawStart);
+  const end = Math.min(columnCount - 1, rawEnd);
+  if (start > end) return [];
+  const out: number[] = [];
+  for (let i = start; i <= end; i++) out.push(i);
+  return out;
+}
