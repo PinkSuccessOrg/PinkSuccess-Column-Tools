@@ -1,7 +1,50 @@
 /* global Excel */
 
-import { detectHeaderRow, normalizeHeader, resolveColumnIndex } from "./headers";
+import { detectHeaderRow, expandColumnRule, normalizeHeader, resolveColumnIndex } from "./headers";
 import { ColumnFormatRule, Preset } from "./presets";
+
+const UNIVERSAL_FONT = "Avenir Next LT Pro";
+const UNIVERSAL_FONT_SIZE = 12;
+
+const BORDER_TYPES: string[] = [
+  "EdgeTop",
+  "EdgeBottom",
+  "EdgeLeft",
+  "EdgeRight",
+  "InsideHorizontal",
+  "InsideVertical",
+];
+
+function applyUniversalFormat(range: Excel.Range): void {
+  range.format.font.name = UNIVERSAL_FONT;
+  range.format.font.size = UNIVERSAL_FONT_SIZE;
+  for (const border of BORDER_TYPES) {
+    range.format.borders.getItem(border as Excel.BorderIndex).style = "None";
+  }
+}
+
+function applyColumnFormats(
+  sheet: Excel.Worksheet,
+  rowCount: number,
+  columnCount: number,
+  rules: ColumnFormatRule[] | undefined
+): void {
+  if (!rules || rowCount === 0) return;
+  for (const rule of rules) {
+    const indices = expandColumnRule(rule.columns, columnCount);
+    for (const idx of indices) {
+      const colRange = sheet.getRangeByIndexes(0, idx, rowCount, 1);
+      if (rule.numberFormat) {
+        const formatGrid: string[][] = [];
+        for (let r = 0; r < rowCount; r++) formatGrid.push([rule.numberFormat]);
+        colRange.numberFormat = formatGrid;
+      }
+      if (rule.horizontalAlignment) {
+        colRange.format.horizontalAlignment = rule.horizontalAlignment;
+      }
+    }
+  }
+}
 
 export type StatusFn = (msg: string) => void;
 
@@ -62,6 +105,10 @@ export async function keepColumnsInOrder(
 
       const target = sheet.getRangeByIndexes(0, 0, outputRows.length, keepHeaders.length);
       target.values = outputRows as Excel.Range["values"];
+
+      applyUniversalFormat(target);
+      applyColumnFormats(sheet, outputRows.length, keepHeaders.length, opts.columnFormats);
+
       await context.sync();
 
       setStatus(`Kept ${keepHeaders.length - missing}/${keepHeaders.length} column(s)${missingSuffix}.`);
