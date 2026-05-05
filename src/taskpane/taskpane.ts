@@ -23,7 +23,7 @@ Office.onReady((info) => {
     container.appendChild(btn);
   }
 
-  bindClick("run-keep-order", () => keepColumnsInOrder(parseCustom(), setStatus));
+  bindClick("run-keep-order", () => keepColumnsInOrder({ headers: parseCustom() }, setStatus));
   bindClick("run-keep-set", () => keepColumnsBySet(parseCustom(), setStatus));
   bindClick("run-remove", () => removeColumnsByHeader(parseCustom(), setStatus));
 });

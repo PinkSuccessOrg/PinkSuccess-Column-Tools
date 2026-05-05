@@ -1,18 +1,27 @@
 /* global Excel */
 
 import { detectHeaderRow, normalizeHeader, resolveColumnIndex } from "./headers";
-import { Preset } from "./presets";
+import { ColumnFormatRule, Preset } from "./presets";
 
 export type StatusFn = (msg: string) => void;
 
+export interface KeepInOrderOptions {
+  headers: string[];
+  columnFormats?: ColumnFormatRule[];
+}
+
 export async function runPreset(preset: Preset, setStatus: StatusFn): Promise<void> {
-  await keepColumnsInOrder(preset.headers, setStatus);
+  await keepColumnsInOrder(
+    { headers: preset.headers, columnFormats: preset.columnFormats },
+    setStatus
+  );
 }
 
 export async function keepColumnsInOrder(
-  keepHeaders: string[],
+  opts: KeepInOrderOptions,
   setStatus: StatusFn
 ): Promise<void> {
+  const { headers: keepHeaders } = opts;
   if (keepHeaders.length === 0) {
     setStatus("No headers given.");
     return;
@@ -33,22 +42,29 @@ export async function keepColumnsInOrder(
         resolveColumnIndex(headerRow, wanted)
       );
 
+      // Data-only output: the universal "no headers" rule means we never write the header row.
       const outputRows: unknown[][] = [];
-      outputRows.push(keepHeaders.slice());
       for (let r = dataStart; r < data.length; r++) {
         const srcRow = data[r];
         outputRows.push(sourceCols.map((idx) => (idx === -1 ? "" : srcRow[idx])));
       }
 
       used.clear();
+
+      const missing = sourceCols.filter((i) => i === -1).length;
+      const missingSuffix = missing > 0 ? ` (${missing} not found in source — emitted blank)` : "";
+
+      if (outputRows.length === 0) {
+        setStatus(`Kept ${keepHeaders.length - missing}/${keepHeaders.length} column(s)${missingSuffix} (no data rows).`);
+        await context.sync();
+        return;
+      }
+
       const target = sheet.getRangeByIndexes(0, 0, outputRows.length, keepHeaders.length);
       target.values = outputRows as Excel.Range["values"];
       await context.sync();
 
-      const missing = sourceCols.filter((i) => i === -1).length;
-      const summary = `Kept ${keepHeaders.length - missing}/${keepHeaders.length} column(s)` +
-        (missing > 0 ? ` (${missing} not found in source — emitted blank)` : "");
-      setStatus(summary + ".");
+      setStatus(`Kept ${keepHeaders.length - missing}/${keepHeaders.length} column(s)${missingSuffix}.`);
     });
   } catch (e) {
     setStatus(`Error: ${(e as Error).message}`);
