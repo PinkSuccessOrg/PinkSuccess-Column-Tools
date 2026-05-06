@@ -84,11 +84,12 @@ export async function keepColumnsInOrder(
     await Excel.run(async (context) => {
       const sheet = context.workbook.worksheets.getActiveWorksheet();
       const used = sheet.getUsedRange();
-      used.load(["values", "numberFormat", "rowCount", "columnCount"]);
+      used.load(["values", "numberFormat", "valueTypes", "rowCount", "columnCount"]);
       await context.sync();
 
       const data = used.values as unknown[][];
       const sourceFormats = used.numberFormat as string[][];
+      const sourceValueTypes = used.valueTypes as Excel.RangeValueType[][];
       const layout = detectHeaderRow(data);
       const headerRow = (data[layout.headerRowIdx] ?? []).map((h) => String(h ?? ""));
       const dataStart = layout.headerRowIdx + 1;
@@ -111,9 +112,18 @@ export async function keepColumnsInOrder(
       for (let r = dataStart; r < data.length; r++) {
         const srcRow = data[r];
         const srcFmtRow = sourceFormats[r] ?? [];
+        const srcTypeRow = sourceValueTypes[r] ?? [];
         outputRows.push(sourceCols.map((idx) => (idx === -1 ? "" : srcRow[idx])));
         outputFormats.push(
-          sourceCols.map((idx) => (idx === -1 ? "General" : srcFmtRow[idx] ?? "General"))
+          sourceCols.map((idx) => {
+            if (idx === -1) return "General";
+            // Force text format on cells whose source value is a string (e.g.,
+            // the Birthdays report stores Birth Date as "6 May"). Without this,
+            // Excel auto-parses the string as a date on writeback and the
+            // inherited "General" format then displays it as a serial number.
+            if (srcTypeRow[idx] === "String") return "@";
+            return srcFmtRow[idx] ?? "General";
+          })
         );
       }
 
