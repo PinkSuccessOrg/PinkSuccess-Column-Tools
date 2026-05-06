@@ -19,11 +19,18 @@ function countNonEmptyCells(row: unknown[]): number {
   return n;
 }
 
+// Row 1 is treated as the header row only when it has strictly more non-empty
+// cells than row 0 by this margin. Without a margin, reports whose header row
+// happens to have one missing/blank cell (e.g., InTouch's Court of Sharing
+// where column 5 is unlabeled) get misclassified — the data row "wins" by 1
+// non-empty cell and we can't resolve any preset headers.
+const MULTIROW_HEADER_MARGIN = 2;
+
 export function detectHeaderRow(rows: unknown[][]): HeaderLayout {
   if (rows.length < 2) return { headerRowIdx: 0, groupingRowIdx: -1 };
   const r0 = countNonEmptyCells(rows[0]);
   const r1 = countNonEmptyCells(rows[1]);
-  if (r1 > r0) return { headerRowIdx: 1, groupingRowIdx: 0 };
+  if (r1 >= r0 + MULTIROW_HEADER_MARGIN) return { headerRowIdx: 1, groupingRowIdx: 0 };
   return { headerRowIdx: 0, groupingRowIdx: -1 };
 }
 

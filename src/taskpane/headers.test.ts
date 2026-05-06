@@ -111,3 +111,23 @@ test("expandColumnRule: range with start > columnCount is empty", () => {
 test("expandColumnRule: range with start > end is empty", () => {
   assert.deepEqual(expandColumnRule([4, 1], 7), []);
 });
+
+test("detectHeaderRow: row 1 with one extra non-empty cell stays at row 0 (Court of Sharing case)", () => {
+  // The InTouch Court of Sharing report has a header row with an unlabeled
+  // column (position 4) and the data row has a value there — so the data row
+  // has exactly 1 more non-empty cell than the header row. The grouping-row
+  // heuristic must NOT treat that as a multi-row header.
+  const rows = [
+    ["Date", "Rpt Title", "Rpt Unit", "Rpt Name", "", "Name", "Sem Qual Team Member", "Sem Recruiter Comm Earned"],
+    ["APRIL-2026", "Seminar YTD Court of Sharing Report", "B235", "Brigitte Iglay", 1.0, "Gina Bateman", 1.0, 36.0],
+  ];
+  assert.deepEqual(detectHeaderRow(rows), { headerRowIdx: 0, groupingRowIdx: -1 });
+});
+
+test("detectHeaderRow: row 1 with two extra non-empty cells still picks row 1 (margin boundary)", () => {
+  const rows = [
+    ["", "", "", "Group A", "", "", ""],          // 1 non-empty
+    ["A", "B", "C"],                                // 3 non-empty (margin=2)
+  ];
+  assert.deepEqual(detectHeaderRow(rows), { headerRowIdx: 1, groupingRowIdx: 0 });
+});

@@ -73,10 +73,11 @@ export async function keepColumnsInOrder(
     await Excel.run(async (context) => {
       const sheet = context.workbook.worksheets.getActiveWorksheet();
       const used = sheet.getUsedRange();
-      used.load(["values", "rowCount", "columnCount"]);
+      used.load(["values", "numberFormat", "rowCount", "columnCount"]);
       await context.sync();
 
       const data = used.values as unknown[][];
+      const sourceFormats = used.numberFormat as string[][];
       const layout = detectHeaderRow(data);
       const headerRow = (data[layout.headerRowIdx] ?? []).map((h) => String(h ?? ""));
       const dataStart = layout.headerRowIdx + 1;
@@ -87,9 +88,14 @@ export async function keepColumnsInOrder(
 
       // Data-only output: the universal "no headers" rule means we never write the header row.
       const outputRows: unknown[][] = [];
+      const outputFormats: string[][] = [];
       for (let r = dataStart; r < data.length; r++) {
         const srcRow = data[r];
+        const srcFmtRow = sourceFormats[r] ?? [];
         outputRows.push(sourceCols.map((idx) => (idx === -1 ? "" : srcRow[idx])));
+        outputFormats.push(
+          sourceCols.map((idx) => (idx === -1 ? "General" : srcFmtRow[idx] ?? "General"))
+        );
       }
 
       used.clear();
@@ -105,6 +111,11 @@ export async function keepColumnsInOrder(
 
       const target = sheet.getRangeByIndexes(0, 0, outputRows.length, keepHeaders.length);
       target.values = outputRows as Excel.Range["values"];
+      // Carry through the source's per-cell numberFormat so columns without an
+      // explicit override (e.g., the % column on Checks) keep their source
+      // display (4% instead of 0.04). Explicit per-rule numberFormat below
+      // overrides this for currency etc.
+      target.numberFormat = outputFormats as Excel.Range["numberFormat"];
 
       applyUniversalFormat(target);
       applyColumnFormats(sheet, outputRows.length, keepHeaders.length, opts.columnFormats);
