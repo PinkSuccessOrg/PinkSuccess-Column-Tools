@@ -50,12 +50,23 @@ export type StatusFn = (msg: string) => void;
 
 export interface KeepInOrderOptions {
   headers: string[];
+  // Optional sparse list of display labels parallel to `headers`. Falls back
+  // to `headers[i]` when missing or undefined. Only used when keepHeader is true.
+  headerLabels?: (string | undefined)[];
+  // Default false: the universal "no headers" rule strips the header row.
+  // Set true to write a header row above the data (e.g., OT Star).
+  keepHeader?: boolean;
   columnFormats?: ColumnFormatRule[];
 }
 
 export async function runPreset(preset: Preset, setStatus: StatusFn): Promise<void> {
   await keepColumnsInOrder(
-    { headers: preset.headers, columnFormats: preset.columnFormats },
+    {
+      headers: preset.headers,
+      headerLabels: preset.headerLabels,
+      keepHeader: preset.keepHeader,
+      columnFormats: preset.columnFormats,
+    },
     setStatus
   );
 }
@@ -86,9 +97,17 @@ export async function keepColumnsInOrder(
         resolveColumnIndex(headerRow, wanted)
       );
 
-      // Data-only output: the universal "no headers" rule means we never write the header row.
+      // The universal "no headers" rule strips the source's header row by default.
+      // A preset can opt back in by setting keepHeader, in which case we write
+      // a header row using each preset's `headerLabels` override (falling back to
+      // the preset's match name).
       const outputRows: unknown[][] = [];
       const outputFormats: string[][] = [];
+      if (opts.keepHeader) {
+        const labels = keepHeaders.map((src, i) => opts.headerLabels?.[i] ?? src);
+        outputRows.push(labels);
+        outputFormats.push(keepHeaders.map(() => "General"));
+      }
       for (let r = dataStart; r < data.length; r++) {
         const srcRow = data[r];
         const srcFmtRow = sourceFormats[r] ?? [];

@@ -11,6 +11,14 @@ export interface Preset {
   id: string;
   label: string;
   headers: string[];
+  // Optional per-column display labels. Sparse — index `i` falls back to
+  // `headers[i]` when the entry is missing or undefined. Lets a preset
+  // abbreviate a verbose source column for the newsletter output.
+  headerLabels?: (string | undefined)[];
+  // Default false: the universal "no headers" rule strips the header row from
+  // the output. Set true on a per-preset basis when the newsletter wants the
+  // column titles preserved (e.g., OT Star).
+  keepHeader?: boolean;
   columnFormats?: ColumnFormatRule[];
 }
 
@@ -29,7 +37,10 @@ export const PRESETS: Preset[] = [
       "Emerald",
       "Pearl",
     ],
+    headerLabels: [undefined, "Whsl $ + TB"],
+    keepHeader: true,
     columnFormats: [
+      { columns: 0, horizontalAlignment: "Left" },
       { columns: [1, 6], numberFormat: CURRENCY, horizontalAlignment: "Center" },
     ],
   },
@@ -54,6 +65,9 @@ export const PRESETS: Preset[] = [
     id: "preset-bday",
     label: "B-Day",
     headers: ["Name", "Birth Date"],
+    columnFormats: [
+      { columns: 1, horizontalAlignment: "Left" },
+    ],
   },
   {
     id: "preset-anniv",
