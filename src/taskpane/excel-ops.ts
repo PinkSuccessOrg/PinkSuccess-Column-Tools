@@ -139,15 +139,30 @@ export async function keepColumnsInOrder(
       }
 
       const target = sheet.getRangeByIndexes(0, 0, outputRows.length, keepHeaders.length);
-      target.values = outputRows as Excel.Range["values"];
-      // Carry through the source's per-cell numberFormat so columns without an
-      // explicit override (e.g., the % column on Checks) keep their source
-      // display (4% instead of 0.04). Explicit per-rule numberFormat below
-      // overrides this for currency etc.
+
+      // Phase 1: pre-format the target cells before any value is written.
+      // Critical for cells we want as text ("@") — if we set values and "@"
+      // in the same sync, Excel's auto-parser runs against the value before
+      // the format takes effect, turning "6 May" into a date serial. Setting
+      // numberFormat in its own sync first locks the cells as text up front.
+      // This also installs the inherited per-cell source numberFormat so
+      // columns without an explicit override (e.g., the % column on Checks)
+      // keep their source display (4% instead of 0.04).
       target.numberFormat = outputFormats as Excel.Range["numberFormat"];
+      await context.sync();
+
+      // Phase 2: write values and apply the rest of the formatting. Per-rule
+      // numberFormat in applyColumnFormats overrides phase 1 for currency etc.
+      target.values = outputRows as Excel.Range["values"];
 
       applyUniversalFormat(target);
       applyColumnFormats(sheet, outputRows.length, keepHeaders.length, opts.columnFormats);
+
+      if (opts.keepHeader) {
+        // Bold the header row (only present when keepHeader is true).
+        const headerRange = sheet.getRangeByIndexes(0, 0, 1, keepHeaders.length);
+        headerRange.format.font.bold = true;
+      }
 
       await context.sync();
 
