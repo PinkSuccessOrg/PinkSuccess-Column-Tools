@@ -84,10 +84,11 @@ export async function keepColumnsInOrder(
     await Excel.run(async (context) => {
       const sheet = context.workbook.worksheets.getActiveWorksheet();
       const used = sheet.getUsedRange();
-      used.load(["values", "numberFormat", "valueTypes", "rowCount", "columnCount"]);
+      used.load(["values", "text", "numberFormat", "valueTypes", "rowCount", "columnCount"]);
       await context.sync();
 
       const data = used.values as unknown[][];
+      const sourceText = used.text as string[][];
       const sourceFormats = used.numberFormat as string[][];
       const sourceValueTypes = used.valueTypes as Excel.RangeValueType[][];
       const layout = detectHeaderRow(data);
@@ -97,6 +98,16 @@ export async function keepColumnsInOrder(
       const sourceCols: number[] = keepHeaders.map((wanted) =>
         resolveColumnIndex(headerRow, wanted)
       );
+
+      // Target column indices flagged forceText — we'll substitute the source's
+      // displayed text for the value and lock these cells as "@".
+      const forceTextTargets = new Set<number>();
+      for (const rule of opts.columnFormats ?? []) {
+        if (!rule.forceText) continue;
+        for (const idx of expandColumnRule(rule.columns, keepHeaders.length)) {
+          forceTextTargets.add(idx);
+        }
+      }
 
       // The universal "no headers" rule strips the source's header row by default.
       // A preset can opt back in by setting keepHeader, in which case we write
@@ -111,12 +122,23 @@ export async function keepColumnsInOrder(
       }
       for (let r = dataStart; r < data.length; r++) {
         const srcRow = data[r];
+        const srcTextRow = sourceText[r] ?? [];
         const srcFmtRow = sourceFormats[r] ?? [];
         const srcTypeRow = sourceValueTypes[r] ?? [];
-        outputRows.push(sourceCols.map((idx) => (idx === -1 ? "" : srcRow[idx])));
+        outputRows.push(
+          sourceCols.map((idx, targetIdx) => {
+            if (idx === -1) return "";
+            // forceText columns: ship the displayed string ("1 May") rather than
+            // the underlying value, so a date-serial source doesn't ride out to
+            // the clipboard as a real date and get pill-ified by Canva/Slides.
+            if (forceTextTargets.has(targetIdx)) return srcTextRow[idx] ?? "";
+            return srcRow[idx];
+          })
+        );
         outputFormats.push(
-          sourceCols.map((idx) => {
+          sourceCols.map((idx, targetIdx) => {
             if (idx === -1) return "General";
+            if (forceTextTargets.has(targetIdx)) return "@";
             // Force text format on cells whose source value is a string (e.g.,
             // the Birthdays report stores Birth Date as "6 May"). Without this,
             // Excel auto-parses the string as a date on writeback and the

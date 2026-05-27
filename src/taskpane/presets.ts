@@ -5,6 +5,11 @@ export interface ColumnFormatRule {
   columns: number | [number, number];
   numberFormat?: string;
   horizontalAlignment?: Alignment;
+  // Write the source cell's *displayed text* instead of its underlying value,
+  // and lock the target as text ("@"). Use for columns where downstream tools
+  // (Canva, Slides) would otherwise auto-detect dates — e.g., "1 May" pasting
+  // as a May 1, 2026 pill because Excel's clipboard ships the date serial.
+  forceText?: boolean;
 }
 
 export interface Preset {
@@ -66,7 +71,7 @@ export const PRESETS: Preset[] = [
     label: "B-Day",
     headers: ["Name", "Birth Date"],
     columnFormats: [
-      { columns: 1, horizontalAlignment: "Left" },
+      { columns: 1, horizontalAlignment: "Left", forceText: true },
     ],
   },
   {
