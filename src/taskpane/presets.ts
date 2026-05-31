@@ -10,6 +10,12 @@ export interface ColumnFormatRule {
   // (Canva, Slides) would otherwise auto-detect dates — e.g., "1 May" pasting
   // as a May 1, 2026 pill because Excel's clipboard ships the date serial.
   forceText?: boolean;
+  // Append U+200B (zero-width space) to each value. Visually identical, but
+  // breaks date-pattern detection in tools that parse pasted strings (Canva
+  // tables auto-convert "6 May" into a date pill even when the source is plain
+  // text — Excel's "@" format doesn't survive the clipboard). Pair with
+  // forceText on date-like columns.
+  evadeDateDetection?: boolean;
 }
 
 export interface Preset {
@@ -71,7 +77,7 @@ export const PRESETS: Preset[] = [
     label: "B-Day",
     headers: ["Name", "Birth Date"],
     columnFormats: [
-      { columns: 1, horizontalAlignment: "Left", forceText: true },
+      { columns: 1, horizontalAlignment: "Left", forceText: true, evadeDateDetection: true },
     ],
   },
   {

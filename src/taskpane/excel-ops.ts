@@ -102,11 +102,13 @@ export async function keepColumnsInOrder(
       // Target column indices flagged forceText — we'll substitute the source's
       // displayed text for the value and lock these cells as "@".
       const forceTextTargets = new Set<number>();
+      // Target column indices flagged evadeDateDetection — append U+200B to each
+      // string value so downstream tools (Canva) can't pattern-match it as a date.
+      const evadeDateTargets = new Set<number>();
       for (const rule of opts.columnFormats ?? []) {
-        if (!rule.forceText) continue;
-        for (const idx of expandColumnRule(rule.columns, keepHeaders.length)) {
-          forceTextTargets.add(idx);
-        }
+        const indices = expandColumnRule(rule.columns, keepHeaders.length);
+        if (rule.forceText) for (const idx of indices) forceTextTargets.add(idx);
+        if (rule.evadeDateDetection) for (const idx of indices) evadeDateTargets.add(idx);
       }
 
       // The universal "no headers" rule strips the source's header row by default.
@@ -131,8 +133,13 @@ export async function keepColumnsInOrder(
             // forceText columns: ship the displayed string ("1 May") rather than
             // the underlying value, so a date-serial source doesn't ride out to
             // the clipboard as a real date and get pill-ified by Canva/Slides.
-            if (forceTextTargets.has(targetIdx)) return srcTextRow[idx] ?? "";
-            return srcRow[idx];
+            const value = forceTextTargets.has(targetIdx)
+              ? srcTextRow[idx] ?? ""
+              : srcRow[idx];
+            if (evadeDateTargets.has(targetIdx) && typeof value === "string" && value !== "") {
+              return value + "​";
+            }
+            return value;
           })
         );
         outputFormats.push(
